@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+
+    <!-- Bootstrap CSS -->
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" rel="stylesheet">
+    <!-- SB Admin Template -->
+    <link href="sb-admin.css" rel="stylesheet">
+    <title>%TITLE%</title>
+
+    <style>
+        .flip {
+            -moz-transform: scaleX(-1);
+            -o-transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+            transform: scaleX(-1);
+            filter: FlipH;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">%TITLE%</a>
+    <button class="btn btn-link btn-sm d-inline-block ml-auto" href="#" id="sidebarToggle"><i
+            class="fa fa-bars"></i></button>
+    <!-- Navbar Search-->
+    <!-- Navbar-->
+</nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+            <div class="sb-sidenav-menu">
+                <div class="nav">
+                    <div class="sb-sidenav-menu-heading">Menü</div>
+                    <a class="nav-link" href="/">
+                        <div class="sb-nav-link-icon"><i class="fa fa-home"></i></div>
+                        Főoldal
+                    </a>
+                    <a class="nav-link" href="schedule">
+                        <div class="sb-nav-link-icon"><i class="fa fa-cutlery"></i></div>
+                        Etetés időzítése
+                    </a>
+                    <!-- <a class="nav-link" href="data">
+                        <div class="sb-nav-link-icon"><i class="fa fa-database"></i></div>
+                        Adatok
+                    </a> -->
+                    <a class="nav-link" href="slots">
+                        <div class="sb-nav-link-icon"><i class="fa fa-bolt"></i></div>
+                        Egyenleg kezelése
+                    </a>
+                    <a class="nav-link" href="portion">
+                        <div class="sb-nav-link-icon"><i class="fa fa-cubes"></i></div>
+                        Adag beállítás
+                    </a>
+                    <a class="nav-link" href="settings">
+                        <div class="sb-nav-link-icon"><i class="fa fa-flask"></i></div>
+                        Beállítások
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid">
+                <h1 class="mt-4">%PAGE_TITLE%</h1>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-6 col-xs-12 mt-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    Beállítás
+                                </div>
+                                <div class="card-body">
+                                    <form action="set_portion" class="form" method="GET"
+                                          onsubmit="return confirm('Biztos?');">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <label class="my-1 mr-2" for="motor_movement">Motor
+                                                    mozgása</label>
+                                                <select class="custom-select my-1 mr-sm-2" id="motor_movement"
+                                                        name="motor_movement">
+                                                    <option selected value="turn_full">Teljes kör</option>
+                                                    <option value="turn_degree_back">Szög oda-vissza</option>
+                                                    <option value="turn_degree">Szög</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="my-1 mr-2" for="motor_value">Érték <small> (szög vagy
+                                                    fordulat)</small></label>
+                                                <input class="form-control" name="motor_value" type="text"
+                                                       value="1">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+
+                                                <label class="my-1 mr-2" for="motor_dir">Irány</label>
+                                                <span class="form-inline">
+                                                        <select class="custom-select my-1 mr-sm-2" id="motor_dir"
+                                                                name="motor_dir">
+                                                            <option selected value="cw">CW</option>
+                                                            <option value="ccw">CCW</option>
+                                                        </select>
+                                                        <i class="fa fa-undo flip" id="motor_dir_icon"></i>
+                                                    </span>
+                                            </div>
+                                            <div class="col-6 ">
+                                                <br>
+                                                <input class="btn btn-primary my-1 float-right" type="submit"
+                                                       value="Mentés"></input>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-xs-12 mt-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    Jelenlegi
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong> Motor mozgás:</strong> <span
+                                                class="float-right"> %MOTOR_MOVEMENT%</span></li>
+                                        <li class="list-group-item"><strong> Érték:</strong> <span
+                                                class="float-right ">%MOTOR_VALUE%</span></li>
+                                        <li class="list-group-item"><strong> Irány:</strong> <span
+                                                class="float-right ">%MOTOR_DIR%</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="py-4 bg-light mt-auto">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center justify-content-between small">
+                    <div class="text-muted">%TITLE% 2020</div>
+
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script crossorigin="anonymous"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src="sb-admin.js"></script>
+<script>
+    $("#motor_dir").change(function () {
+        if ($("#motor_dir").val() == "cw") {
+            $("#motor_dir_icon").addClass("flip");
+        } else {
+            $("#motor_dir_icon").removeClass("flip");
+        }
+    });
+</script>
+</body>
+
+</html>
