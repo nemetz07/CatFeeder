@@ -4,17 +4,7 @@
 
 #include "Motor.h"
 
-Motor::Motor() : Motor(DEFAULT_PIN, DEFAULT_MIN, DEFAULT_MAX) {
-}
-
-Motor::Motor(int pin) : Motor(pin, DEFAULT_MIN, DEFAULT_MAX) {
-}
-
-Motor::Motor(int pin, int min, int max) {
-    this->pin = pin;
-    this->min = min;
-    this->max = max;
-
+Motor::Motor() {
     ESP32PWM::allocateTimer(0);
     ESP32PWM::allocateTimer(1);
     ESP32PWM::allocateTimer(2);
@@ -22,30 +12,40 @@ Motor::Motor(int pin, int min, int max) {
 
     servo.setPeriodHertz(DEFAULT_PERIOD_HERTZ);
     servo.attach(pin, min, max);
-}
 
-void Motor::setPeriodHertz(int hertz) {
-    this->periodHertz = hertz;
-
-    reset();
 }
 
 void Motor::reset() {
-    servo.setPeriodHertz(periodHertz);
     servo.detach();
+    servo.setPeriodHertz(periodHertz);
     servo.attach(pin, min, max);
 }
 
 void Motor::start() {
+    Serial.println("Executing actions!");
     for (int i = 0; i < actionLength; ++i) {
         doAction(actions[i]);
     }
 }
 
 void Motor::doAction(MotorAction action) {
+    Serial.print("ACTION - ");
+
+    Serial.print("Setting position: ");
+    Serial.print(action.startDegree);
     servo.write(action.startDegree);
+
+    Serial.print(" degree | Waiting for: ");
+    Serial.print(action.startDelay);
     delay(action.startDelay);
+
+    Serial.print(" ms | Setting position: ");
+    Serial.print(action.endDegree);
     servo.write(action.endDegree);
+
+    Serial.print(" degree | Waiting for: ");
+    Serial.print(action.endDelay);
+    Serial.println(" ms");
     delay(action.endDelay);
 }
 
@@ -74,6 +74,49 @@ void Motor::addAction(MotorAction action) {
     actionLength++;
 }
 
+int Motor::getPin() const {
+    return pin;
+}
+
+void Motor::setPin(int pin) {
+    Motor::pin = pin;
+    reset();
+}
+
+void Motor::turnDegree(int value) {
+    servo.write(value);
+}
+
+int Motor::getMin() const {
+    return min;
+}
+
+void Motor::setMin(int min) {
+    Motor::min = min;
+
+    reset();
+}
+
+int Motor::getMax() const {
+    return max;
+}
+
+void Motor::setMax(int max) {
+    Motor::max = max;
+
+    reset();
+}
+
+int Motor::getPeriodHertz() const {
+    return periodHertz;
+}
+
+void Motor::setPeriodHertz(int periodHertz) {
+    Motor::periodHertz = periodHertz;
+
+    reset();
+}
+
 MotorAction::MotorAction(int startDegree, int endDegree, int startDelay, int endDelay) : startDegree(startDegree),
                                                                                          endDegree(endDegree),
                                                                                          startDelay(startDelay),
@@ -82,4 +125,5 @@ MotorAction::MotorAction(int startDegree, int endDegree, int startDelay, int end
 MotorAction::MotorAction(int startDegree, int endDegree, int startDelay) : MotorAction(startDegree, endDegree,
                                                                                        startDelay, -1) {}
 
-MotorAction::MotorAction(): MotorAction(0,0,0,0) {}
+MotorAction::MotorAction() : MotorAction(0, 0, 0, 0) {}
+

@@ -15,7 +15,8 @@
 #define DELAY_MIN 100
 #define DELAY_MAX 5000
 
-struct MotorAction{
+
+struct MotorAction {
 public:
     int startDegree = 0;
     int endDegree = 0;
@@ -23,29 +24,55 @@ public:
     int endDelay = -1;
 
     MotorAction();
+
     MotorAction(int startDegree, int endDegree, int startDelay);
+
     MotorAction(int startDegree, int endDegree, int startDelay, int endDelay);
 };
 
 class Motor {
 public:
-    Motor();
-    Motor(int pin);
-    Motor(int pin, int min, int max);
-    void setPeriodHertz(int hertz);
     void reset();
+
     void start();
+
     void addAction(MotorAction action);
+
     void clearActions();
+
+    void turnDegree(int value);
+
+    int getPin() const;
+
+    void setPin(int pin);
+
+    int getMin() const;
+
+    void setMin(int min);
+
+    int getMax() const;
+
+    void setMax(int max);
+
+    int getPeriodHertz() const;
+
+    void setPeriodHertz(int periodHertz);
+
+    Motor();
+
 private:
     Servo servo;
-    int pin, min, max;
+
+    int pin = DEFAULT_PIN;
+    int min = DEFAULT_MIN;
+    int max = DEFAULT_MAX;
     int periodHertz = DEFAULT_PERIOD_HERTZ;
+
     MotorAction actions[ACTIONS_MAX];
+
     int actionLength = 0;
 
     void doAction(MotorAction action);
 };
-
 
 #endif //CATFEEDER_MOTOR_H
