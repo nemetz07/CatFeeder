@@ -4,7 +4,7 @@
 
 #include "TimeUtil.h"
 
-byte packetBuffer[48];
+byte packetBuffer[NTP_PACKET_SIZE];
 WiFiUDP udp;
 
 void TimeUtil::sendNTPpacket(IPAddress &address) {
@@ -51,7 +51,7 @@ time_t TimeUtil::getNtpTime() {
             secsSince1900 |= (unsigned long) packetBuffer[41] << 16;
             secsSince1900 |= (unsigned long) packetBuffer[42] << 8;
             secsSince1900 |= (unsigned long) packetBuffer[43];
-            return secsSince1900 - 2208988800UL + timeZone * SECS_PER_HOUR;
+            return secsSince1900 - 2208988800UL + TIMEZONE * SECS_PER_HOUR;
         }
     }
     Serial.println("No NTP Response :-(");
@@ -82,8 +82,8 @@ void TimeUtil::printDigits(int digits) {
 
 void TimeUtil::init() {
     Serial.println("Starting UDP");
-    udp.begin(localPort);
+    udp.begin(LOCAL_PORT);
     Serial.println("waiting for sync");
     setSyncProvider(getNtpTime);
-    setSyncInterval(300);
+    setSyncInterval(REFRESH_RATE);
 }

@@ -10,16 +10,21 @@
 #include <WiFiUdp.h>
 #include <WiFi.h>
 
+#define TIMEZONE 1
+#define NTP_PACKET_SIZE 48
+#define LOCAL_PORT 8888
+#define REFRESH_RATE 3600
+
 class TimeUtil {
 public:
-    static const int NTP_PACKET_SIZE = 48; // NTP time is in the first 48 bytes of message
-    static const int timeZone = 1;
-    static const unsigned int localPort = 8888;
-
     static void init();
+
     static void sendNTPpacket(IPAddress &address);
+
     static time_t getNtpTime();
+
     static void digitalClockDisplay();
+
     static void printDigits(int digits);
 };
 
