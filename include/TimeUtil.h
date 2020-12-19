@@ -9,6 +9,7 @@
 #include <Arduino.h>
 #include <WiFiUdp.h>
 #include <WiFi.h>
+#include "TimeLib.h"
 
 #define TIMEZONE 1
 #define NTP_PACKET_SIZE 48

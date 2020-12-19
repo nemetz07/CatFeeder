@@ -30,4 +30,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(Z_DUMMY_TARGET ${SRC_LIST} src/Motor.cpp include/Motor.h src/controller/HomeController.cpp include/controller/HomeController.h src/controller/SettingsController.cpp include/controller/SettingsController.h src/FoodDispenser.cpp include/FoodDispenser.h src/controller/ScheduleController.cpp include/controller/ScheduleController.h)
+add_executable(Z_DUMMY_TARGET ${SRC_LIST})
