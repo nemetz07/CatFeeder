@@ -7,7 +7,7 @@
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
 
     <!-- Bootstrap CSS -->
-    <link href="bootstrap.min.css" rel="stylesheet">
+<!--    <link href="bootstrap.min.css" rel="stylesheet">-->
     <!-- Font Awesome -->
     <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
           integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" rel="stylesheet">
@@ -43,18 +43,6 @@
                         <div class="sb-nav-link-icon"><i class="fa fa-cutlery"></i></div>
                         Etetés időzítése
                     </a>
-                    <!-- <a class="nav-link" href="data">
-                      <div class="sb-nav-link-icon"><i class="fa fa-database"></i></div>
-                      Adatok
-                    </a> -->
-                    <a class="nav-link" href="slots">
-                        <div class="sb-nav-link-icon"><i class="fa fa-bolt"></i></div>
-                        Egyenleg kezelése
-                    </a>
-                    <a class="nav-link" href="portion">
-                        <div class="sb-nav-link-icon"><i class="fa fa-cubes"></i></div>
-                        Adag beállítás
-                    </a>
                     <a class="nav-link" href="/settings">
                         <div class="sb-nav-link-icon"><i class="fa fa-flask"></i></div>
                         Beállítások
@@ -71,10 +59,10 @@
                     <div class="col-xl-4 col-md-6">
                         <div class="card bg-danger text-white mb-4">
                             <div class="card-body">
-                                <h1>%FREE_SLOTS%<span class="h5"> /%MAX_SLOTS%</span></h1>
+                                <h1>%COOLDOWN%</h1>
                             </div>
                             <div class="card-footer d-flex align-items-center justify-content-between">
-                                <a class="text-white">Egyenleg</a>
+                                <a class="text-white">Cooldown</a>
                                 <div class="text-white"><i class="fa fa-bolt"></i></div>
                             </div>
                         </div>
@@ -95,24 +83,11 @@
                     <div class="col-xl-4 col-md-6">
                         <div class="card bg-info text-white mb-4">
                             <div class="card-body">
-                                <h1>%NEXT_DISPENSE_TIME% <span class="h5"> %NEXT_DISPENSE_DATE%</span></h1>
+                                <h1>%NEXT_DISPENSE_TIME% <span class="h5"> %NEXT_DISPENSE_DATE%</span> %IS_DAILY%</h1>
                             </div>
                             <div class="card-footer d-flex align-items-center justify-content-between">
                                 <a class="text-white">Következő etetés</a>
                                 <div class="text-white"><i class="fa fa-clock-o"></i></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xl-6 col-md-6">
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <i class="fa fa-bar-chart"></i>
-                                Diagram
-                            </div>
-                            <div class="card-body">
-                                <canvas height="85" id="myBarChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -122,14 +97,14 @@
         <footer class="py-4 bg-light mt-auto">
             <div class="container-fluid">
                 <div class="d-flex align-items-center justify-content-between small">
-                    <div class="text-muted">%TITLE% 2020</div>
+                    <div class="text-muted">%TITLE% %YEAR%</div>
                 </div>
             </div>
         </footer>
     </div>
 </div>
 <script src="jquery-3.5.1.min.js"></script>
-<script src="bootstrap.min.js"></script>
+<!--<script src="bootstrap.min.js"></script>-->
 <script src="sb-admin.js"></script>
 </body>
 

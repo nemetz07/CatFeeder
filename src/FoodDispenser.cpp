@@ -2,7 +2,9 @@
 // Created by Norbi on 2020. 12. 18..
 //
 
+#include <SPIFFS.h>
 #include "FoodDispenser.h"
+#include "ArduinoJson.h"
 
 void foodAlarmCallback() {
     FoodDispenser::getInstance().processAlarm();
@@ -26,30 +28,18 @@ void FoodDispenser::giveFood() {
     motor.start();
 }
 
-void FoodDispenser::addFoodAlarm(int hour, int minute, bool isDaily) {
+void FoodDispenser::addAlarm(int hour, int minute, int portion, bool isDaily) {
     if (alarm.isSet) {
-        Alarm.disable(alarm.id);
-        Alarm.free(alarm.id);
+        deleteAlarm(false);
     }
 
-    AlarmID_t alarmId = isDaily ? Alarm.alarmRepeat(hour, minute, 0, foodAlarmCallback) : Alarm.alarmOnce(hour, minute,
-                                                                                                          0,
-                                                                                                          foodAlarmCallback);
-
-    FoodAlarm newAlarm;
-    newAlarm.id = alarmId;
-    newAlarm.isDaily = isDaily;
-    newAlarm.isSet = true;
-    newAlarm.hour = hour;
-    newAlarm.minute = minute;
-    newAlarm.callback = foodAlarmCallback;
-
-    this->alarm = newAlarm;
+    setAlarm(hour, minute, portion, isDaily);
+    saveAlarmToFile();
 }
 
 FoodDispenser::FoodDispenser() {
-    MotorAction action1(0, 90, 2000);
-    MotorAction action2(90, 0, 2000);
+    MotorAction action1(0, 180, 1000);
+    MotorAction action2(180, 0, 1000);
     motor.addAction(action1);
     motor.addAction(action2);
 }
@@ -122,10 +112,116 @@ String FoodDispenser::getNextDispenseTime() const {
 
 void FoodDispenser::processAlarm() {
     if (!alarm.isDaily) {
-        Alarm.disable(alarm.id);
-        Alarm.free(alarm.id);
-        alarm.isSet = false;
+        deleteAlarm(true);
     }
 
-    giveFood();
+    for (int i = 0; i < alarm.portion; ++i) {
+        giveFood();
+    }
+}
+
+bool FoodDispenser::isAlarmDaily() const {
+    return alarm.isSet && alarm.isDaily;
+}
+
+void FoodDispenser::deleteAlarm(bool withFile) {
+    Alarm.disable(alarm.id);
+    Alarm.free(alarm.id);
+    alarm.isSet = false;
+
+    if (withFile) {
+        deleteAlarmFile();
+    }
+}
+
+void FoodDispenser::loadAlarmFromFile() {
+    Serial.println("Loading alarm");
+    Serial.print("Opening file for reading - ");
+    Serial.println(ALARM_FILE);
+
+    File file = SPIFFS.open(ALARM_FILE, FILE_READ);
+    if (!file) {
+        Serial.println("There was an error opening the file for writing");
+        return;
+    }
+
+    StaticJsonDocument<128> doc;
+
+    Serial.println("Deserializing from file...");
+    DeserializationError error = deserializeJson(doc, file);
+    if (error) {
+        Serial.println(F("Failed to read file, using default configuration"));
+    }
+
+    Serial.println("Closing file");
+    file.close();
+
+    int hour = doc["hour"] | 12;
+    int minute = doc["minute"] | 0;
+    int portion = doc["portion"] | 1;
+    bool isDaily = doc["isDaily"] | false;
+
+    setAlarm(hour, minute, portion, isDaily);
+}
+
+void FoodDispenser::saveAlarmToFile() const {
+    Serial.println("Saving alarm");
+    Serial.print("Opening file for writing - ");
+    Serial.println(ALARM_FILE);
+
+    File file = SPIFFS.open(ALARM_FILE, FILE_WRITE);
+    if (!file) {
+        Serial.println("There was an error opening the file for writing");
+        return;
+    }
+
+    StaticJsonDocument<128> doc;
+    doc["hour"] = alarm.hour;
+    doc["minute"] = alarm.minute;
+    doc["portion"] = alarm.portion;
+    doc["isDaily"] = alarm.isDaily;
+
+    Serial.println("Writing alarm to file...");
+    if (serializeJson(doc, file) == 0) {
+        Serial.println(F("Failed to write to file"));
+    }
+
+    Serial.println("Closing file");
+    file.close();
+}
+
+void FoodDispenser::deleteAlarmFile() {
+    if (SPIFFS.exists(ALARM_FILE)) {
+        Serial.println("Deleting alarm file");
+        SPIFFS.remove(ALARM_FILE);
+    }
+}
+
+void FoodDispenser::init() {
+    if (SPIFFS.exists(ALARM_FILE)) {
+        loadAlarmFromFile();
+    }
+}
+
+void FoodDispenser::setAlarm(int hour, int minute, int portion, bool isDaily) {
+    AlarmID_t alarmId = isDaily ? Alarm.alarmRepeat(hour, minute, 0, foodAlarmCallback) : Alarm.alarmOnce(hour, minute,
+                                                                                                          0,
+                                                                                                          foodAlarmCallback);
+    Serial.print("Set alarm for ");
+    Serial.print(hour);
+    Serial.print(":");
+    Serial.print(minute);
+    Serial.print(" | Portion: ");
+    Serial.print(portion);
+    if(isDaily){
+        Serial.print(" (Repeat)");
+    }
+    Serial.println();
+
+    alarm.id = alarmId;
+    alarm.isDaily = isDaily;
+    alarm.isSet = true;
+    alarm.hour = hour;
+    alarm.minute = minute;
+    alarm.portion = (portion < 1 || portion > 5) ? 1 : portion;
 }

@@ -6,9 +6,10 @@
 #include <controller/SettingsController.h>
 #include <TimeAlarms.h>
 #include <controller/ScheduleController.h>
+#include <FoodDispenser.h>
 #include "TimeUtil.h"
-
-#define SERVER_PORT 3000
+#include "Constants.h"
+#include "ArduinoJson.h"
 
 AsyncWebServer server(SERVER_PORT);
 
@@ -42,20 +43,23 @@ void setupTimeSync() {
 void setupRoutes() {
     //Static files
     server.serveStatic("/sb-admin.css", SPIFFS, "/sb-admin.css");
-    server.serveStatic("/bootstrap.min.css", SPIFFS, "/bootstrap.min.css");
-    server.serveStatic("/bootstrap.min.js", SPIFFS, "/bootstrap.min.js");
+//    server.serveStatic("/bootstrap.min.css", SPIFFS, "/bootstrap.min.css");
+//    server.serveStatic("/bootstrap.min.js", SPIFFS, "/bootstrap.min.js");
     server.serveStatic("/sb-admin.js", SPIFFS, "/sb-admin.js");
     server.serveStatic("/jquery-3.5.1.min.js", SPIFFS, "/jquery-3.5.1.min.js");
+    server.serveStatic("jquery.timepicker.min.css", SPIFFS, "jquery.timepicker.min.css");
+    server.serveStatic("jquery.timepicker.min.js", SPIFFS, "jquery.timepicker.min.js");
 
     //View routes
     server.on("/", HTTP_GET, HomeController::index);
     server.on("/settings", HTTP_GET, SettingsController::index);
+    server.on("/schedule", HTTP_GET, ScheduleController::index);
 
     //API routes
     server.on("/api/servoPin", HTTP_POST, SettingsController::setServoPin);
     server.on("/api/testMotor", HTTP_POST, SettingsController::testMotor);
-    server.on("/api/alarm", HTTP_POST, ScheduleController::addAlarm);
-
+    server.on("/api/schedule", HTTP_POST, ScheduleController::setSchedule);
+    server.on("/api/schedule", HTTP_DELETE, ScheduleController::deleteSchedule);
 }
 
 void setupServer() {
@@ -78,8 +82,10 @@ void setup() {
     setupWifi();
     setupTimeSync();
     setupServer();
+
+    FoodDispenser::getInstance().init();
 }
 
 void loop() {
-    Alarm.delay(1000);
+    Alarm.delay(10000);
 }

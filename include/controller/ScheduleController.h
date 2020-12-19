@@ -12,10 +12,12 @@ class ScheduleController {
 public:
     static void index(AsyncWebServerRequest *request);
 
-    static void addAlarm(AsyncWebServerRequest *request);
+    static void setSchedule(AsyncWebServerRequest *request);
 
+    static void deleteSchedule(AsyncWebServerRequest *request);
 private:
-    static void processor();
+    static String processor(const String &var);
+
 };
 
 

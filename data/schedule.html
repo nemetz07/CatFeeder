@@ -6,24 +6,25 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
 
-    <!-- Bootstrap CSS -->
-    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" rel="stylesheet">
     <!-- Font Awesome -->
     <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
           integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" rel="stylesheet">
-    <!-- Timepicker -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css" rel="stylesheet">
     <!-- SB Admin Template -->
     <link href="sb-admin.css" rel="stylesheet">
+    <link href="jquery.timepicker.min.css" rel="stylesheet">
     <title>%TITLE%</title>
 </head>
 
 <body>
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">%TITLE%</a>
-    <button class="btn btn-link btn-sm d-inline-block ml-auto" href="#" id="sidebarToggle"><i
-            class="fa fa-bars"></i></button>
+    <a class="btn btn-link btn-sm d-inline-block ml-2" href="#" id="sidebarToggle">
+        <svg class="bi bi-grid-fill" fill="currentColor" height="16" viewBox="0 0 16 16" width="16"
+             xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"
+                  fill-rule="evenodd"/>
+        </svg>
+    </a>
+    <a class="navbar-brand ml-2" href="/">%TITLE%</a>
     <!-- Navbar Search-->
     <!-- Navbar-->
 </nav>
@@ -41,19 +42,7 @@
                         <div class="sb-nav-link-icon"><i class="fa fa-cutlery"></i></div>
                         Etetés időzítése
                     </a>
-                    <!-- <a class="nav-link" href="data">
-                        <div class="sb-nav-link-icon"><i class="fa fa-database"></i></div>
-                        Adatok
-                    </a> -->
-                    <a class="nav-link" href="slots">
-                        <div class="sb-nav-link-icon"><i class="fa fa-bolt"></i></div>
-                        Egyenleg kezelése
-                    </a>
-                    <a class="nav-link" href="portion">
-                        <div class="sb-nav-link-icon"><i class="fa fa-cubes"></i></div>
-                        Adag beállítás
-                    </a>
-                    <a class="nav-link" href="settings">
+                    <a class="nav-link" href="/settings">
                         <div class="sb-nav-link-icon"><i class="fa fa-flask"></i></div>
                         Beállítások
                     </a>
@@ -73,28 +62,28 @@
                                     <h5>Beállítás</h5>
                                 </div>
                                 <div class="card-body">
-                                    <form action="/set_schedule" method="GET" onsubmit="return confirm('Biztos?');">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label>Időpont</label>
-                                                <input class="form-control timepicker mb-2" name="time" type="text">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label>Adag</label>
-                                                <input class="form-control mb-2" max="%MAX_SLOTS%" min="1"
-                                                       name="portion_num" type="number" value="1">
-                                            </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="input_time">Időpont</label>
+                                            <input class="form-control timepicker mb-2" id="input_time" name="time"
+                                                   type="text">
                                         </div>
-                                        <div class="custom-control custom-checkbox my-1 mr-sm-2">
-                                            <input checked class="custom-control-input"
-                                                   id="customControlInline" name="is_daily" type="checkbox">
-                                            <label class="custom-control-label"
-                                                   for="customControlInline">Naponta</label>
+                                        <div class="col-md-6">
+                                            <label for="input_portion">Adag</label>
+                                            <input class="form-control mb-2" id="input_portion" max="5" min="1"
+                                                   name="portion_num" type="number" value="1">
                                         </div>
-                                        <div class="form-group mb-0 float-right">
-                                            <input class="btn btn-success" type="submit">
-                                        </div>
-                                    </form>
+                                    </div>
+                                    <div class="custom-control custom-checkbox my-1 mr-sm-2">
+                                        <input checked class="custom-control-input"
+                                               id="input_is_daily" type="checkbox">
+                                        <label class="custom-control-label"
+                                               for="input_is_daily">Naponta</label>
+                                    </div>
+                                    <div class="form-group mb-0 float-right">
+                                        <button class="btn btn-success" id="button_set_schedule" type="submit">Küldés
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -109,16 +98,14 @@
                                                 <h3>%TIME%</h3>
                                             </div>
                                             <div class="col-4">
-                                                <form action="delete_schedule" method="GET"
-                                                      onsubmit="return confirm('Biztos?');">
-                                                    <input class="btn btn-danger" type="submit" value="Törlés"></input>
-                                                </form>
+                                                <button class="btn btn-danger"
+                                                        id="button_delete_schedule">Törlés</button>
                                             </div>
                                         </span>
                                     <p class="mt-4 mb-0">Naponta:
                                         <span style="%IS_DAILY_COLOR%">
-                                                <i aria-hidden="true" class="fa %IS_DAILY_ICON%"></i>
-                                            </span>
+                                            %IS_DAILY_ICON%
+                                        </span>
                                     </p>
                                 </div>
                             </div>
@@ -138,23 +125,12 @@
     </div>
 </div>
 
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script crossorigin="anonymous"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script crossorigin="anonymous"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-        src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script crossorigin="anonymous"
-        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src="jquery-3.5.1.min.js"></script>
 <script src="sb-admin.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+<script src="jquery.timepicker.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('input.timepicker').timepicker({
+        let timepicker = $('input.timepicker').timepicker({
             timeFormat: 'HH:mm',
             interval: 30,
             minTime: '7:00',
@@ -164,7 +140,44 @@
             dropdown: true,
             scrollbar: true
         });
+
+        $('#button_set_schedule').click(function () {
+            time = $('#input_time').val().split(":");
+            hour = time[0];
+            minute = time[1];
+
+            console.log(hour);
+            console.log(minute);
+
+            portion = $('#input_portion').val();
+            isDaily = $('#input_is_daily').is(":checked");
+
+            console.log({"hour": hour, "minute": minute, "portion": portion, "isDaily": isDaily})
+
+            $.post("/api/schedule", {
+                "hour": hour,
+                "minute": minute,
+                "portion": portion,
+                "is_daily": isDaily
+            }, function (data) {
+                console.log(data);
+                location.reload();
+            });
+        });
+
+        $('#button_delete_schedule').click(function () {
+            $.ajax({
+                url: "api/schedule",
+                type: 'DELETE',
+                success: function (data) {
+                    console.log(data);
+                    location.reload();
+                }
+            });
+        });
     });
+
+
 </script>
 </body>
 

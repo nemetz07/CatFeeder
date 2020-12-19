@@ -9,12 +9,13 @@
 #include <Motor.h>
 #include <TimeAlarms.h>
 
+#define ALARM_FILE "/alarm.json"
+
 struct FoodAlarm {
     AlarmID_t id = 0;
     bool isSet = false;
     bool isDaily = false;
-    int hour = -1, minute = -1;
-    OnTick_t callback = nullptr;
+    int hour = -1, minute = -1, portion = 1;
 };
 
 class FoodDispenser {
@@ -22,7 +23,7 @@ public:
 
     static FoodDispenser &getInstance();
 
-    void addFoodAlarm(int hour, int minute, bool isDaily);
+    void addAlarm(int hour, int minute, int portion, bool isDaily);
 
     void processAlarm();
 
@@ -42,12 +43,26 @@ public:
 
     String getNextDispenseTime() const;
 
+    void deleteAlarm(bool withFile);
+
+    bool isAlarmDaily() const;
+
+    void init();
+
 private:
     FoodAlarm alarm;
     Motor motor;
     TimeElements lastDispenseDate{};
 
     bool hasPrevious = false;
+
+    void saveAlarmToFile() const;
+
+    void loadAlarmFromFile();
+
+    void deleteAlarmFile();
+
+    void setAlarm(int hour, int minute, int portion, bool isDaily);
 
     FoodDispenser();
 };
