@@ -21,9 +21,7 @@ void FoodDispenser::giveFood() {
         hasPrevious = true;
     }
 
-    TimeElements elements;
-    breakTime(now(), elements);
-    lastDispenseDate = elements;
+    breakTime(now(), lastDispenseDate);
 
     motor.start();
 }
