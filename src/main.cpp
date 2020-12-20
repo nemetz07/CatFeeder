@@ -9,14 +9,24 @@
 #include <FoodDispenser.h>
 #include "TimeUtil.h"
 #include "Constants.h"
-#include "ArduinoJson.h"
 
 AsyncWebServer server(SERVER_PORT);
 
 void setupSPIFFS() {
+    Serial.println("Initializing SPIFFS storage");
+
     if (!SPIFFS.begin(true)) {
         Serial.println("An Error has occurred while mounting SPIFFS");
         return;
+    }
+
+    Serial.println("Mounting SPIFFS is successful!");
+
+    File root = SPIFFS.open("/");
+    File file = root.openNextFile();
+    while(file){
+        Serial.println(file.name());
+        file = root.openNextFile();
     }
 }
 
@@ -42,13 +52,12 @@ void setupTimeSync() {
 
 void setupRoutes() {
     //Static files
+    server.serveStatic("/favicon.png", SPIFFS, "/favicon.png");
     server.serveStatic("/sb-admin.css", SPIFFS, "/sb-admin.css");
-//    server.serveStatic("/bootstrap.min.css", SPIFFS, "/bootstrap.min.css");
-//    server.serveStatic("/bootstrap.min.js", SPIFFS, "/bootstrap.min.js");
     server.serveStatic("/sb-admin.js", SPIFFS, "/sb-admin.js");
     server.serveStatic("/jquery-3.5.1.min.js", SPIFFS, "/jquery-3.5.1.min.js");
-    server.serveStatic("jquery.timepicker.min.css", SPIFFS, "jquery.timepicker.min.css");
-    server.serveStatic("jquery.timepicker.min.js", SPIFFS, "jquery.timepicker.min.js");
+    server.serveStatic("/jquery.timepicker.min.css", SPIFFS, "/jquery.timepicker.min.css");
+    server.serveStatic("/jquery.timepicker.min.js", SPIFFS, "/jquery.timepicker.min.js");
 
     //View routes
     server.on("/", HTTP_GET, HomeController::index);
