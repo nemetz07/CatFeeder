@@ -19,7 +19,7 @@ void ScheduleController::setSchedule(AsyncWebServerRequest *request) {
     int hour = (request->arg("hour")).toInt();
     int minute = (request->arg("minute")).toInt();
     int portion = (request->arg("portion")).toInt();
-    bool isDaily = request->arg("isDaily");
+    bool isDaily = (request->arg("isDaily")).equals("true");
 
     Serial.println("Params: ");
     Serial.print(hour);

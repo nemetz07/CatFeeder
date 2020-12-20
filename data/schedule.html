@@ -5,6 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <link href="favicon.png" rel="icon" type="image/png">
 
     <!-- Font Awesome -->
     <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -24,8 +25,10 @@
                   fill-rule="evenodd"/>
         </svg>
     </a>
-    <a class="navbar-brand ml-2" href="/">%TITLE%</a>
-    <!-- Navbar Search-->
+    <div style="margin: auto; width: 50%;text-align: center">
+        <a class="navbar-brand p-0" href="/"><img alt="cat icon" src="favicon.png"
+                                              style="filter: invert(); margin-right: 10px">%TITLE%</a>
+    </div>
     <!-- Navbar-->
 </nav>
 <div id="layoutSidenav">
@@ -38,7 +41,7 @@
                         <div class="sb-nav-link-icon"><i class="fa fa-home"></i></div>
                         Főoldal
                     </a>
-                    <a class="nav-link" href="schedule">
+                    <a class="nav-link" href="/schedule">
                         <div class="sb-nav-link-icon"><i class="fa fa-cutlery"></i></div>
                         Etetés időzítése
                     </a>
@@ -158,7 +161,7 @@
                 "hour": hour,
                 "minute": minute,
                 "portion": portion,
-                "is_daily": isDaily
+                "isDaily": isDaily
             }, function (data) {
                 console.log(data);
                 location.reload();
