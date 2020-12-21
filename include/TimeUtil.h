@@ -27,6 +27,12 @@ public:
     static void digitalClockDisplay();
 
     static void printDigits(int digits);
+
+    static String getTime(TimeElements elements);
+
+    static String getDate(TimeElements elements);
+
+    static String getDateTime(TimeElements elements);
 };
 
 

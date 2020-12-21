@@ -87,3 +87,28 @@ void TimeUtil::init() {
     setSyncProvider(getNtpTime);
     setSyncInterval(REFRESH_RATE);
 }
+
+String TimeUtil::getTime(TimeElements elements) {
+    String time(elements.Hour);
+    elements.Minute < 10 ? time.concat(":0") : time.concat(":");
+    time.concat(elements.Minute);
+
+    return time;
+}
+
+String TimeUtil::getDate(TimeElements elements) {
+    String date(elements.Year + 1970);
+    date.concat(".");
+    date.concat(elements.Month);
+    date.concat(".");
+    date.concat(elements.Day);
+    return date;
+}
+
+String TimeUtil::getDateTime(TimeElements elements) {
+    String dateTime(getDate(elements));
+    dateTime.concat(" ");
+    dateTime.concat(getTime(elements));
+
+    return dateTime;
+}
