@@ -67,6 +67,8 @@ void setupRoutes() {
     //API routes
     server.on("/api/servoPin", HTTP_POST, SettingsController::setServoPin);
     server.on("/api/testMotor", HTTP_POST, SettingsController::testMotor);
+    server.on("/api/manual", HTTP_POST, SettingsController::giveFoodManual);
+    server.on("/api/manual", HTTP_DELETE, SettingsController::resetCooldown);
     server.on("/api/schedule", HTTP_POST, ScheduleController::setSchedule);
     server.on("/api/schedule", HTTP_DELETE, ScheduleController::deleteSchedule);
 }

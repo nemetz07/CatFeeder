@@ -4,6 +4,7 @@
 
 #include <SPIFFS.h>
 #include <FoodDispenser.h>
+#include <TimeUtil.h>
 #include "controller/HomeController.h"
 #include "Constants.h"
 
@@ -30,6 +31,10 @@ String HomeController::processor(const String &var) {
     } else if (var == "IS_DAILY") {
         return FoodDispenser::getInstance().isAlarmDaily() ? R"(<i class="fa fa-repeat" style="color: #1d6975"></i>)"
                                                            : "";
+    } else if (var == "COOLDOWN_TIME") {
+        return FoodDispenser::getInstance().isManualReady() ? "Szabad" : TimeUtil::getTime(FoodDispenser::getInstance().getCooldownEnd());
+    } else if (var == "COOLDOWN_DATE") {
+        return FoodDispenser::getInstance().isManualReady() ? "" : TimeUtil::getDate(FoodDispenser::getInstance().getCooldownEnd());
     }
 
     return "-";

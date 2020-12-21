@@ -127,33 +127,54 @@
                         </div>
                     </div>
                 </div>
-                <h2 class="mt-4">Teszt</h2>
+                <h2 class="mt-4 text-center mb-4">Teszt</h2>
                 <div class="container">
-                    <div class="col-xl-6 mb-3">
-                        <div class="card">
-                            <div class="card-header">
-                                Motor pozíció (szög)
-                            </div>
-                            <div class="card-body">
-                                <div class="form-row">
-                                    <div class="form-group col-md-8 mr-1">
-                                        <label for="input_motor_test">Érték: <span id="slider_value">0</span> </label>
-                                        <input class="form-control-range" id="input_motor_test" max="180" min="0"
-                                               type="range"
-                                               value="0">
-                                        <div class="mt-3">
-                                            <label class="mr-4" for="enable_motor_test">Engedélyezve</label>
-                                            <input class="form-check-input" id="enable_motor_test"
-                                                   type="checkbox">
+                    <div class="row">
+                        <div class="col-lg-6 mb-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    Motor pozíció (szög)
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-8 mr-1">
+                                            <label for="input_motor_test">Érték: <span id="slider_value">0</span>
+                                            </label>
+                                            <input class="form-control-range" id="input_motor_test" max="180" min="0"
+                                                   type="range"
+                                                   value="0">
+                                            <div class="mt-3">
+                                                <label class="mr-4" for="enable_motor_test">Engedélyezve</label>
+                                                <input class="form-check-input" id="enable_motor_test"
+                                                       type="checkbox">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <button class="btn btn-danger float-right" id="btn_motor_test">Mehet</button>
+                                        <div class="form-group col-md-3">
+                                            <button class="btn btn-danger float-right" id="btn_motor_test">Mehet
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6 col-sm-12 mb-3">
+                            <div class="card">
+                                <div class="card-header text-center">
+                                    Manuális adag
+                                </div>
+                                <div class="card-body" style="text-align: center">
+                                    <button class="btn btn-success mr-1" id="button_manual_dispensing">
+                                        1 adag
+                                    </button>
+                                    <button class="btn btn-danger ml-1" id="button_reset_cooldown">
+                                        Számláló törlése
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+
                 </div>
             </div>
         </main>
@@ -174,24 +195,40 @@
 <script>
     let last = new Date();
 
-    $('#input_motor_test').on("input", function (value) {
-        value = $('#input_motor_test').val();
-        $('#slider_value').text(value);
-        if ($('#enable_motor_test').is(':checked')) {
-            let now = new Date();
-            if (now.getTime() - last.getTime() > 50) {
-                $.post("/api/testMotor", {value: value}, function (data) {
-                    console.log(data);
-                });
-                last = now;
-            }
-        }
+    // $('#input_motor_test').on("input", function (value) {
+    //     value = $('#input_motor_test').val();
+    //     $('#slider_value').text(value);
+    //     if ($('#enable_motor_test').is(':checked')) {
+    //         let now = new Date();
+    //         if (now.getTime() - last.getTime() > 50) {
+    //             $.post("/api/testMotor", {value: value}, function (data) {
+    //                 console.log(data);
+    //             });
+    //             last = now;
+    //         }
+    //     }
+    // });
+    //
+    // $('#btn_motor_test').click(function () {
+    //     val = $('#input_motor_test').val();
+    //     $.post("/api/testMotor", {value: val}, function (data) {
+    //         console.log(data);
+    //     });
+    // });
+
+    $('#button_manual_dispensing').click(function () {
+        $.post("/api/manual", {}, function (data) {
+            console.log(data);
+        });
     });
 
-    $('#btn_motor_test').click(function () {
-        val = $('#input_motor_test').val();
-        $.post("/api/testMotor", {value: val}, function (data) {
-            console.log(data);
+    $('#button_reset_cooldown').click(function () {
+        $.ajax({
+            url: "/api/manual",
+            type: 'DELETE',
+            success: function (data) {
+                console.log(data);
+            }
         });
     });
 </script>

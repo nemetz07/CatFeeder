@@ -17,6 +17,9 @@ public:
 
     static void testMotor(AsyncWebServerRequest *request);
 
+    static void giveFoodManual(AsyncWebServerRequest *request);
+
+    static void resetCooldown(AsyncWebServerRequest *request);
 private:
     static String processor(const String &var);
 };

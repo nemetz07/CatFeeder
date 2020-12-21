@@ -4,7 +4,11 @@
 
 #include <SPIFFS.h>
 #include <Motor.h>
+#include <FoodDispenser.h>
+#include <TimeUtil.h>
+#include <Constants.h>
 #include "controller/SettingsController.h"
+#include "ArduinoJson.h"
 
 void SettingsController::index(AsyncWebServerRequest *request) {
     Serial.println("Settings - index");
@@ -12,6 +16,14 @@ void SettingsController::index(AsyncWebServerRequest *request) {
 }
 
 String SettingsController::processor(const String &var) {
+    if (var == "TITLE") {
+        return TITLE;
+    } else if (var == "YEAR") {
+        return YEAR;
+    } else if (var == "PAGE_TITLE") {
+        return "Beállítások";
+    }
+
     return "-";
 }
 
@@ -37,5 +49,29 @@ void SettingsController::testMotor(AsyncWebServerRequest *request) {
 //    Motor::getInstance().turnDegree(degree);
 
     request->send(200, "text/plain", "success");
+}
+
+void SettingsController::giveFoodManual(AsyncWebServerRequest *request) {
+    StaticJsonDocument<128> doc;
+    int code = 200;
+    String message;
+
+    if (FoodDispenser::getInstance().isManualReady()) {
+        doc["message"] = "OK";
+    } else {
+        code = 400;
+        String error("Manual food dispensing is unavailable until ");
+        error.concat(TimeUtil::getDateTime(FoodDispenser::getInstance().getCooldownEnd()));
+        doc["message"] = error;
+    }
+
+    ArduinoJson::serializeJson(doc, message);
+    request->send(code, "application/json", message);
+
+    FoodDispenser::getInstance().giveFoodManual();
+}
+
+void SettingsController::resetCooldown(AsyncWebServerRequest *request) {
+    FoodDispenser::getInstance().resetCooldown();
 }
 

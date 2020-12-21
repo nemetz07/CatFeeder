@@ -10,6 +10,8 @@
 #include <TimeAlarms.h>
 
 #define ALARM_FILE "/alarm.json"
+#define COOLDOWN_FILE "/cooldown.json"
+#define COOLDOWN_TIME 60 * 5
 
 struct FoodAlarm {
     AlarmID_t id = 0;
@@ -27,7 +29,7 @@ public:
 
     void processAlarm();
 
-    void giveFood();
+    void resetCooldown();
 
     void addMotorAction(MotorAction action);
 
@@ -49,10 +51,21 @@ public:
 
     void init();
 
+    void giveFoodManual();
+
+    const TimeElements &getCooldownEnd() const;
+
+    bool isManualReady() const;
+
 private:
     FoodAlarm alarm;
     Motor motor;
     TimeElements lastDispenseDate{};
+
+    TimeElements cooldownEnd{};
+    AlarmID_t cooldownAlarmId = 0;
+
+    bool manualReady = true;
 
     bool hasPrevious = false;
 
@@ -62,7 +75,15 @@ private:
 
     void deleteAlarmFile();
 
+    void saveCooldownToFile();
+
+    void loadCooldownFromFile();
+
+    void deleteCooldownFile();
+
     void setAlarm(int hour, int minute, int portion, bool isDaily);
+
+    void giveFood();
 
     FoodDispenser();
 };

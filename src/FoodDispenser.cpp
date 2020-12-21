@@ -3,11 +3,16 @@
 //
 
 #include <SPIFFS.h>
+#include <TimeUtil.h>
 #include "FoodDispenser.h"
 #include "ArduinoJson.h"
 
 void foodAlarmCallback() {
     FoodDispenser::getInstance().processAlarm();
+}
+
+void cooldownCallback() {
+    FoodDispenser::getInstance().resetCooldown();
 }
 
 FoodDispenser &FoodDispenser::getInstance() {
@@ -123,7 +128,6 @@ bool FoodDispenser::isAlarmDaily() const {
 }
 
 void FoodDispenser::deleteAlarm(bool withFile) {
-    Alarm.disable(alarm.id);
     Alarm.free(alarm.id);
     alarm.isSet = false;
 
@@ -199,6 +203,9 @@ void FoodDispenser::init() {
     if (SPIFFS.exists(ALARM_FILE)) {
         loadAlarmFromFile();
     }
+    if (SPIFFS.exists(COOLDOWN_FILE)) {
+        loadCooldownFromFile();
+    }
 }
 
 void FoodDispenser::setAlarm(int hour, int minute, int portion, bool isDaily) {
@@ -211,7 +218,7 @@ void FoodDispenser::setAlarm(int hour, int minute, int portion, bool isDaily) {
     Serial.print(minute);
     Serial.print(" | Portion: ");
     Serial.print(portion);
-    if(isDaily){
+    if (isDaily) {
         Serial.print(" (Repeat)");
     }
     Serial.println();
@@ -222,4 +229,100 @@ void FoodDispenser::setAlarm(int hour, int minute, int portion, bool isDaily) {
     alarm.hour = hour;
     alarm.minute = minute;
     alarm.portion = (portion < 1 || portion > 5) ? 1 : portion;
+}
+
+void FoodDispenser::giveFoodManual() {
+    if (!manualReady) {
+        Serial.print("Manual food dispensing is unavailable until ");
+        Serial.println(TimeUtil::getDateTime(cooldownEnd));
+        return;
+    }
+
+    Serial.println("Manual food dispensing");
+    manualReady = false;
+    breakTime(now() + COOLDOWN_TIME, cooldownEnd);
+    cooldownAlarmId = Alarm.timerOnce(COOLDOWN_TIME, cooldownCallback);
+    saveCooldownToFile();
+
+    giveFood();
+}
+
+void FoodDispenser::resetCooldown() {
+    Serial.println("Manual is ready");
+    Alarm.free(cooldownAlarmId);
+
+    manualReady = true;
+    cooldownEnd = {};
+    cooldownAlarmId = 0;
+    deleteCooldownFile();
+}
+
+const TimeElements &FoodDispenser::getCooldownEnd() const {
+    return cooldownEnd;
+}
+
+bool FoodDispenser::isManualReady() const {
+    return manualReady;
+}
+
+void FoodDispenser::deleteCooldownFile() {
+    if (SPIFFS.exists(COOLDOWN_FILE)) {
+        Serial.println("Deleting cooldown file");
+        SPIFFS.remove(COOLDOWN_FILE);
+    }
+}
+
+void FoodDispenser::saveCooldownToFile() {
+    Serial.println("Saving cooldown");
+    Serial.print("Opening file for writing - ");
+    Serial.println(COOLDOWN_FILE);
+
+    File file = SPIFFS.open(COOLDOWN_FILE, FILE_WRITE);
+    if (!file) {
+        Serial.println("There was an error opening the file for writing");
+        return;
+    }
+
+    StaticJsonDocument<64> doc;
+    doc["timestamp"] = makeTime(cooldownEnd);
+
+    Serial.println("Writing cooldown to file...");
+    if (serializeJson(doc, file) == 0) {
+        Serial.println(F("Failed to write to file"));
+    }
+
+    Serial.println("Closing file");
+    file.close();
+}
+
+void FoodDispenser::loadCooldownFromFile() {
+    Serial.println("Loading cooldown");
+    Serial.print("Opening file for reading - ");
+    Serial.println(COOLDOWN_FILE);
+
+    File file = SPIFFS.open(COOLDOWN_FILE, FILE_READ);
+    if (!file) {
+        Serial.println("There was an error opening the file for writing");
+        return;
+    }
+
+    StaticJsonDocument<64> doc;
+
+    Serial.println("Deserializing from file...");
+    DeserializationError error = deserializeJson(doc, file);
+    if (error) {
+        Serial.println(F("Failed to read file, using default configuration"));
+    }
+
+    Serial.println("Closing file");
+    file.close();
+
+    time_t timestamp = doc["timestamp"] | -1;
+
+    if (timestamp != -1) {
+        manualReady = false;
+
+        cooldownAlarmId = Alarm.timerOnce(timestamp - now(), cooldownCallback);
+        breakTime(timestamp, cooldownEnd);
+    }
 }
