@@ -186,7 +186,7 @@
 
         $('#button_delete_schedule').click(function () {
             $.ajax({
-                url: "api/schedule",
+                url: "/api/schedule",
                 type: 'DELETE',
                 success: function (data) {
                     console.log(data);
